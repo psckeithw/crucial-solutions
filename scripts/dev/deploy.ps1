@@ -11,7 +11,7 @@
   uploading the zip package.
 
 .EXAMPLE
-  pwsh scripts\dev\deploy.ps1 -HomeSubscriptionId <home-sub-id> -AhaSubscriptionId <aha-sub-id> -ResourceGroup rg-ado-snowsync-poc-01 -FunctionAppName fun-ado-snowsync-poc-01
+  pwsh scripts\dev\deploy.ps1 -HomeSubscriptionId <home-sub-id> -AhaSubscriptionId <aha-sub-id> -ResourceGroup rg-snowsync-dev -FunctionAppName func-snowsync
 #>
 
 [CmdletBinding()]
@@ -19,8 +19,8 @@ param(
   [string]$Project = "src/Function/ServiceNowToAdo.csproj",
   [string]$PublishDir = "$PWD/build/publish",
   [string]$ZipPath = "$PWD/build/functionapp.zip",
-  [string]$ResourceGroup = "rg-ado-snowsync-poc-01",
-  [string]$FunctionAppName = "fun-ado-snowsync-poc-01",
+  [string]$ResourceGroup = "rg-snowsync-dev",
+  [string]$FunctionAppName = "func-snowsync",
   [Parameter(Mandatory)]
   [string]$AhaSubscriptionId,
   [string]$HomeSubscriptionId

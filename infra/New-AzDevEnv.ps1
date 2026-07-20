@@ -12,7 +12,7 @@
 [CmdletBinding()]
 param(
   [string]$Location = "eastus",
-  [string]$ResourceGroup = "rg-ado-snowsync-poc-01",
+  [string]$ResourceGroup = "rg-snowsync-dev",
   [string]$SubscriptionId = "fcdfebaa-fd41-4c69-994d-8c3f746a48c2",
   [Parameter(Mandatory)][string]$AdoOrg,
   [string]$AdoPat,
@@ -88,7 +88,7 @@ $ApiKey = Get-Secret $ApiKey "INTEGRATION_API_KEY"
 
 # ── 02. Derive static names ────────────────────────────────────────────────────
 
-# Extract base name from ResourceGroup: rg-ado-snowsync-poc-01 → ado-snowsync-poc-01
+# Extract base name from ResourceGroup: rg-snowsync-dev → ado-snowsync-poc-01
 $baseName = ($ResourceGroup -replace '^rg-', '').ToLower()
 $base = $baseName.Replace('-', '')
 $storageName = $base.Substring(0, [Math]::Min(24, $base.Length))
@@ -150,8 +150,7 @@ if (-not (AzShow "az monitor app-insights component show --app $appiName --resou
 } else {
   Write-Host "Exists; reusing."
 }
-$appInsightsConn = @()
-$appInsightsConn = (az monitor app-insights component show --app $appiName --resource-group $ResourceGroup --query connectionString -o tsv 2>&1 | Where-Object { $_ -notmatch "ERROR" }) 2>&1
+$appInsightsConn = AzShow "az monitor app-insights component show --app $appiName --resource-group $ResourceGroup --query connectionString -o tsv"
 if (-not $appInsightsConn) { $appInsightsConn = "InstrumentationKey=placeholder" }
 $appInsightsConn = $appInsightsConn.Trim()
 

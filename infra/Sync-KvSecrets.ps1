@@ -6,9 +6,9 @@
 
 [CmdletBinding()]
 param(
-  [string]$VaultName = "kv-ado-snowsync-poc-01",
-  [string]$ResourceGroup = "rg-ado-snowsync-poc-01",
-  [string]$FuncName = "fun-ado-snowsync-poc-01",
+  [string]$VaultName = "kv-snowsync",
+  [string]$ResourceGroup = "rg-snowsync-dev",
+  [string]$FuncName = "func-snowsync",
   [string]$Location = "eastus"
 )
 

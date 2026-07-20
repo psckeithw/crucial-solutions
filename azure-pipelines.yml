@@ -15,8 +15,8 @@ pool:
 variables:
   dotnetVersion: '8.0.x'
   buildConfiguration: 'Release'
-  functionAppName: 'fun-ado-snowsync-poc-01'
-  resourceGroup: 'rg-ado-snowsync-poc-01'
+  functionAppName: 'func-snowsync'
+  resourceGroup: 'rg-snowsync-dev'
   artifactName: 'function-app'
   runVeracode: 'false'
 

@@ -569,10 +569,13 @@
             <label for="incidentInput">Incident Number</label>
             <input type="text" id="incidentInput" placeholder="INC1234567" style="padding:6px 8px;font-size:12.5px;border:1px solid var(--sn-border);background:var(--sn-input);color:var(--sn-text);border-radius:3px;width:100%;margin-bottom:12px;">
             <label for="projectPick">Target Azure DevOps project</label>
-            <select id="projectPick">
-              <option value="" selected disabled>Choose a project…</option>
-              <option value="UPO-Sandbox">UPO-Sandbox</option>
-            </select>
+             <select id="projectPick">
+               <option value="" selected disabled>Choose a project…</option>
+               <option value="azure-infra">azure-infra</option>
+               <option value="gold-leaf-ag">gold-leaf-ag</option>
+               <option value="Heartbeat">Heartbeat</option>
+               <option value="vector-em">vector-em</option>
+             </select>
             <div class="hint">Selecting a project and saving will send this incident's data to your service, which creates a matching user story in that Azure DevOps project.</div>
           </div>
           <div id="payloadDisplay" style="display:none;margin-top:12px;padding:12px;background:#1b2733;border:1px solid var(--sn-border);border-radius:3px;">
@@ -606,7 +609,7 @@
   // different origin than the Functions host, point at the Azure Function endpoint.
   // In a real ServiceNow-hosted deployment this would be a same-origin relative path.
   const API_ENDPOINT = (location.protocol === 'file:' || location.port !== '7071')
-    ? 'https://fun-ado-snowsync-poc-01.azurewebsites.net/api/servicenow/userstory'
+    ? 'https://func-snowsync.azurewebsites.net/api/servicenow/userstory'
     : '/api/servicenow/userstory';
   const API_KEY = 'snowsync-dev-api-key';
 
