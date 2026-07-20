@@ -1,0 +1,6 @@
+{
+  "IncidentNumber": "INC0012458",
+  "TeamProject": "UPO",
+  "Title": "Incident previously routed to a different project",
+  "Description": "This INC was created in another project; expects org-wide fallback to return project != UPO."
+}

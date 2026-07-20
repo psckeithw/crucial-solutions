@@ -1,0 +1,44 @@
+# Build outputs
+bin/
+obj/
+build/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local settings / secrets
+local.settings.json
+secrets/
+.env
+*.pfx
+*.publishsettings
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# OS / misc
+.DS_Store
+Thumbs.db
+*.log
+.codesearch.db/
+
+# NuGet
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+.nuget/
+
+# Test results
+TestResults/
+.coverage
+coverage*.json
+
+# Azurite
+azurite/
+
+# FUSE container artifacts
+.fuse_hidden*

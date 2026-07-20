@@ -1,0 +1,20 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=ccbff8bc-88f7-4a6f-8c73-c2bcd753989a;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=fe804ca6-bb6a-4f8a-a6a7-f99887592382",
+    "Ado__Organization": "AzureDevOpsDFW",
+    "Ado__PersonalAccessToken": "<replace-with-ado-pat>",
+    "Ado__CustomIncidentField": "Custom.ServiceNowIncidentNumber",
+    "Ado__WorkItemType": "User Story",
+    "Ado__EnableCrossProjectDedupe": "true",
+    "ApiKey__ApiKey": "snowsync-dev-api-key",
+    "ApiKey__HeaderName": "X-API-Key",
+    "Logging__VerbosePayload": "false",
+    "AzureOpenAI__Endpoint": "https://ai-common-openai-01.openai.azure.com/",
+    "AzureOpenAI__DeploymentName": "gpt-4o-deployment",
+    "AzureOpenAI__ModelName": "gpt-4o",
+    "AzureOpenAI__ApiKey": "openai-api-key"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "version": "2.0",
+  "host": {
+    "localHttpPort": 7071,
+    "cors": "*",
+    "preferredAuth": "anonymous"
+  },
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "maxTelemetryItemsPerSecond": 5
+      }
+    }
+  }
+}

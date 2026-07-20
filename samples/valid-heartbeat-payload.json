@@ -1,0 +1,7 @@
+{
+  "IncidentNumber": "INC0010001",
+  "TeamProject": "Heartbeat",
+  "Title": "Test Title for Heartbeat",
+  "Description": "Test Description for Heartbeat Incident",
+  "IncidentUrl": "https://<snow-instance>/nav_to.do?uri=incident_do?sys_id=...&sysparm_query=number=INC0010001"
+}

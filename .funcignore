@@ -1,0 +1,10 @@
+local.settings.json
+bin/
+obj/
+.vscode/
+.idea
+secrets/
+.terraform/
+*.tfstate
+*.tfstate.backup
+samples/

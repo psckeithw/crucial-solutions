@@ -1,0 +1,247 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - src/Function/**
+      - tests/**
+      - azure-pipelines.yml
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  dotnetVersion: '8.0.x'
+  buildConfiguration: 'Release'
+  functionAppName: 'fun-ado-snowsync-poc-01'
+  resourceGroup: 'rg-ado-snowsync-poc-01'
+  artifactName: 'function-app'
+  runVeracode: 'false'
+
+stages:
+  # Stage 1: Build & Scan
+  - stage: BuildAndScan
+    displayName: 'Build & Security Scan'
+    jobs:
+      - job: BuildJob
+        displayName: 'Build Function App'
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET 8'
+            inputs:
+              version: $(dotnetVersion)
+              packageType: 'sdk'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore dependencies'
+            inputs:
+              command: 'restore'
+              projects: 'src/Function/ServiceNowToAdo.csproj'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build Release'
+            inputs:
+              command: 'build'
+              projects: 'src/Function/ServiceNowToAdo.csproj'
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish for Azure'
+            inputs:
+              command: 'publish'
+              projects: 'src/Function/ServiceNowToAdo.csproj'
+              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/publish'
+              publishWebProjects: false
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish function artifact'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/publish'
+              artifact: '$(artifactName)'
+
+      - job: VeracodeJob
+        displayName: 'Veracode Security Scan'
+        dependsOn: []
+        condition: and(succeeded(), eq(variables['runVeracode'], 'true'))
+        steps:
+          - checkout: self
+            fetchDepth: 0
+
+          - task: UseDotNet@2
+            displayName: 'Install .NET 8 for build'
+            inputs:
+              version: $(dotnetVersion)
+              packageType: 'sdk'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build for scanning'
+            inputs:
+              command: 'build'
+              projects: 'src/Function/ServiceNowToAdo.csproj'
+              arguments: '--configuration $(buildConfiguration)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish for scanning'
+            inputs:
+              command: 'publish'
+              projects: 'src/Function/ServiceNowToAdo.csproj'
+              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/veracode-publish'
+              publishWebProjects: false
+
+          - task: Veracode@3
+            displayName: 'Veracode Policy Scan'
+            inputs:
+              ConnectionDetailsSelection: 'Credentials'
+              apiId: '$(VERACODE_API_ID)'
+              apiKey: '$(VERACODE_API_KEY)'
+              veracodeFile: '$(Build.ArtifactStagingDirectory)/veracode-publish'
+              scanName: '$(Build.BuildId)-$(Build.Repository.Name)'
+              includeThirdParty: true
+              failOnScan: true
+              uploadExcludedFiles: '*.pdb,*.dbg'
+            continueOnError: true
+
+      - job: TestJob
+        displayName: 'Run Unit Tests'
+        dependsOn: BuildJob
+        condition: succeeded()
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET 8'
+            inputs:
+              version: $(dotnetVersion)
+              packageType: 'sdk'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run unit tests'
+            inputs:
+              command: 'test'
+              projects: 'tests/ServiceNowToAdo.Tests.csproj'
+              arguments: '--configuration $(buildConfiguration) --logger trx'
+
+          - task: PublishTestResults@2
+            displayName: 'Publish test results'
+            condition: always()
+            inputs:
+              testResultsFormat: 'VSTest'
+              testResultsFiles: '**/*.trx'
+              failTaskOnFailedTests: true
+
+  # Stage 2: Deploy
+  - stage: Deploy
+    displayName: 'Deploy to Azure'
+    dependsOn: BuildAndScan
+    condition: succeeded()
+    jobs:
+      - deployment: DeployFunction
+        displayName: 'Deploy Function App'
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download build artifact'
+                  inputs:
+                    artifactName: $(artifactName)
+                    targetPath: '$(Pipeline.Workspace)/publish'
+
+                - task: UseDotNet@2
+                  displayName: 'Install .NET 8'
+                  inputs:
+                    version: $(dotnetVersion)
+                    packageType: 'sdk'
+
+                - task: AzureFunctionApp@1
+                  displayName: 'Deploy to Azure Function App'
+                  inputs:
+                    azureSubscription: '$(AZURE_SUBSCRIPTION_CONNECTION)'
+                    appType: 'functionAppLinux'
+                    appName: $(functionAppName)
+                    package: '$(Pipeline.Workspace)/publish'
+                    runtimeStack: 'DOTNET-ISOLATED|8.0'
+                    deploymentMethod: 'zipDeploy'
+
+                - task: AzureAppServiceSettings@1
+                  displayName: 'Verify app settings post-deploy'
+                  inputs:
+                    azureSubscription: '$(AZURE_SUBSCRIPTION_CONNECTION)'
+                    appName: $(functionAppName)
+                    resourceGroupName: $(resourceGroup)
+                    appSettings: |
+                      [
+                        {
+                          "name": "FUNCTIONS_WORKER_RUNTIME",
+                          "value": "dotnet-isolated",
+                          "slotSetting": false
+                        }
+                      ]
+
+  # Stage 3: Smoke Test
+  - stage: SmokeTest
+    displayName: 'Post-Deployment Tests'
+    dependsOn: Deploy
+    condition: succeeded()
+    jobs:
+      - job: HealthCheck
+        displayName: 'Health Check & Smoke Tests'
+        steps:
+          - task: PowerShell@2
+            displayName: 'Test function endpoint'
+            inputs:
+              targetType: 'inline'
+              script: |
+                $functionUrl = "https://$(functionAppName).azurewebsites.net/api/health"
+                $maxRetries = 5
+                $retryDelay = 10
+                
+                for ($i = 0; $i -lt $maxRetries; $i++) {
+                  try {
+                    Write-Host "Attempt $($i + 1): Testing $functionUrl"
+                    $response = Invoke-RestMethod -Uri $functionUrl -Method Get -ErrorAction Stop
+                    Write-Host "✓ Health check passed"
+                    Write-Host "Response: $response"
+                    exit 0
+                  }
+                  catch {
+                    Write-Host "  Attempt $($i + 1) failed: $($_.Exception.Message)"
+                    if ($i -lt $maxRetries - 1) {
+                      Start-Sleep -Seconds $retryDelay
+                    }
+                  }
+                }
+                
+                Write-Host "✗ Health check failed after $maxRetries attempts"
+                exit 1
+
+          - task: PowerShell@2
+            displayName: 'Test user story endpoint'
+            inputs:
+              targetType: 'inline'
+              script: |
+                $payload = @{
+                  incident_number = "TEST-$(Get-Random)"
+                  short_description = "POC deployment verification"
+                  description = "Automated smoke test from pipeline"
+                  priority = "3"
+                } | ConvertTo-Json
+                
+                $functionUrl = "https://$(functionAppName).azurewebsites.net/api/servicenow/userstory"
+                $headers = @{
+                  "Content-Type" = "application/json"
+                  "X-API-Key" = "$(INTEGRATION_API_KEY)"
+                }
+                
+                try {
+                  $response = Invoke-RestMethod -Uri $functionUrl -Method Post -Body $payload -Headers $headers -ErrorAction Stop
+                  Write-Host "✓ User story endpoint test passed"
+                  Write-Host "Response: $($response | ConvertTo-Json)"
+                }
+                catch {
+                  Write-Host "✗ User story endpoint test failed: $($_.Exception.Message)"
+                  exit 1
+                }

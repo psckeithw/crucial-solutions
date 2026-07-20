@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incident - <span id="genInc">INC0010234</span></title>
+<style>
+  :root{
+    --sn-black:#0b0d17;
+    --sn-navy:#152238;
+    --sn-navy-2:#1c2e4a;
+    --sn-teal:#00b0a3;
+    --sn-teal-dark:#03302d;
+    --sn-bg:#f4f6f8;
+    --sn-panel:#ffffff;
+    --sn-border:#d5dbe1;
+    --sn-text:#1b2733;
+    --sn-text-mute:#5b6b79;
+    --sn-red:#c0392b;
+    --sn-amber:#c98a1d;
+    --font-ui: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:var(--font-ui);
+    background:var(--sn-bg);
+    color:var(--sn-text);
+    font-size:13px;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    height:46px;
+    background:var(--sn-black);
+    display:flex;
+    align-items:center;
+    padding:0 12px;
+    gap:14px;
+    color:#e7ecf1;
+  }
+  .topbar .brand{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:600;
+    letter-spacing:.2px;
+    font-size:14px;
+  }
+  .brand .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--sn-teal);
+    box-shadow:0 0 0 3px rgba(0,176,163,.25);
+  }
+  .topbar .search{
+    flex:1;
+    max-width:420px;
+    margin-left:12px;
+  }
+  .topbar .search input{
+    width:100%;
+    background:#1b2233;
+    border:1px solid #2a3346;
+    border-radius:4px;
+    padding:6px 10px;
+    color:#dfe6ec;
+    font-size:12.5px;
+  }
+  .topbar .search input::placeholder{color:#7c8896;}
+  .topbar-right{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    font-size:12px;
+    color:#a9b4bf;
+  }
+  .avatar{
+    width:26px;height:26px;border-radius:50%;
+    background:linear-gradient(135deg,var(--sn-teal),#0d6e64);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-size:11px;
+  }
+
+  /* ---------- Layout ---------- */
+  .shell{
+    display:flex;
+    min-height:calc(100vh - 46px);
+  }
+  .sidenav{
+    width:210px;
+    background:var(--sn-navy);
+    color:#c7d2dd;
+    padding:14px 0;
+    flex-shrink:0;
+  }
+  .sidenav .group-label{
+    padding:10px 16px 6px;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:#7e91a6;
+  }
+  .sidenav a{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:8px 16px;
+    color:#c7d2dd;
+    text-decoration:none;
+    font-size:12.5px;
+    border-left:3px solid transparent;
+  }
+  .sidenav a:hover{ background:var(--sn-navy-2); }
+  .sidenav a.active{
+    background:var(--sn-navy-2);
+    border-left-color:var(--sn-teal);
+    color:#fff;
+    font-weight:600;
+  }
+  .sidenav .icon{
+    width:14px;height:14px;
+    border-radius:3px;
+    background:#39485f;
+    flex-shrink:0;
+  }
+  .sidenav a.active .icon{ background:var(--sn-teal); }
+
+  .main{
+    flex:1;
+    min-width:0;
+    padding:0;
+  }
+
+  /* breadcrumb / record header */
+  .recordbar{
+    background:var(--sn-panel);
+    border-bottom:1px solid var(--sn-border);
+    padding:10px 22px;
+  }
+  .crumbs{
+    font-size:11px;
+    color:var(--sn-text-mute);
+    margin-bottom:6px;
+  }
+  .crumbs span{ color:var(--sn-text-mute); }
+  .crumbs b{ color:var(--sn-text); font-weight:600; }
+  .record-title-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .record-title-row h1{
+    font-size:17px;
+    margin:0;
+    font-weight:700;
+  }
+  .badge{
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    padding:3px 9px;
+    border-radius:11px;
+    color:#fff;
+  }
+  .badge.priority-1{ background:var(--sn-red); }
+  .badge.state-new{ background:var(--sn-amber); }
+  .actions{
+    margin-left:auto;
+    display:flex;
+    gap:8px;
+  }
+  .btn{
+    border:1px solid var(--sn-border);
+    background:#fff;
+    color:var(--sn-text);
+    padding:7px 14px;
+    border-radius:4px;
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .btn:hover{ background:#f0f2f4; }
+  .btn.primary{
+    background:var(--sn-teal);
+    border-color:var(--sn-teal);
+    color:#fff;
+  }
+  .btn.primary:hover{ background:#039488; }
+  .btn.primary:disabled{
+    background:#8fc9c3;
+    border-color:#8fc9c3;
+    cursor:not-allowed;
+  }
+
+  /* form body */
+  .formwrap{
+    padding:20px 22px 60px;
+    max-width:980px;
+  }
+  .panel{
+    background:var(--sn-panel);
+    border:1px solid var(--sn-border);
+    border-radius:5px;
+    margin-bottom:16px;
+  }
+  .panel-head{
+    padding:10px 16px;
+    border-bottom:1px solid var(--sn-border);
+    font-weight:700;
+    font-size:12.5px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--sn-text);
+  }
+  .panel-head .tag{
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    background:var(--sn-teal-dark);
+    color:#8fe6dc;
+    padding:2px 7px;
+    border-radius:3px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+  }
+  .field{
+    padding:10px 16px;
+    border-bottom:1px solid #eef1f3;
+  }
+  .field.full{ grid-column:1 / -1; }
+  .field label{
+    display:block;
+    font-size:11px;
+    color:var(--sn-text-mute);
+    margin-bottom:4px;
+    font-weight:600;
+  }
+  .field .value{
+    font-size:13px;
+    color:var(--sn-text);
+  }
+  .field input[type=text], .field textarea, .field select{
+    width:100%;
+    border:1px solid var(--sn-border);
+    border-radius:4px;
+    padding:6px 8px;
+    font-size:12.5px;
+    font-family:inherit;
+    color:var(--sn-text);
+    background:#fff;
+  }
+  .field textarea{ resize:vertical; min-height:56px; }
+  .field select:focus, .field input:focus, .field textarea:focus{
+    outline:2px solid rgba(0,176,163,.35);
+    outline-offset:1px;
+    border-color:var(--sn-teal);
+  }
+
+  /* Replication panel - the signature element */
+  .replicate-panel{
+    border:1px solid #bfe3de;
+    background:linear-gradient(180deg,#f1fbfa 0%, #ffffff 55%);
+  }
+  .replicate-panel .panel-head{
+    background:var(--sn-teal-dark);
+    color:#fff;
+    border-bottom:none;
+  }
+  .replicate-panel .panel-head .tag{
+    background:rgba(255,255,255,.15);
+    color:#c9f4ee;
+  }
+  .replicate-body{
+    padding:16px;
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+  .replicate-select-wrap{
+    flex:1;
+    min-width:240px;
+  }
+  .replicate-select-wrap label{
+    display:block;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--sn-text);
+    margin-bottom:6px;
+  }
+  .replicate-select-wrap .hint{
+    font-size:11px;
+    color:var(--sn-text-mute);
+    margin-top:5px;
+  }
+  select#projectPick{
+    width:100%;
+    max-width:340px;
+    padding:8px 10px;
+    font-size:13px;
+    border:1.5px solid #9fd6cf;
+    border-radius:5px;
+    background:#fff;
+    color:var(--sn-text);
+    font-weight:600;
+  }
+  .project-card{
+    flex:1;
+    min-width:220px;
+    border:1px dashed #bcd8d4;
+    border-radius:5px;
+    padding:12px;
+    background:#fff;
+    font-size:11.5px;
+    color:var(--sn-text-mute);
+    display:none;
+  }
+  .project-card.show{ display:block; }
+  .project-card .pc-title{
+    font-weight:700;
+    color:var(--sn-text);
+    font-size:12.5px;
+    margin-bottom:4px;
+  }
+  .project-card dl{
+    margin:8px 0 0;
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:3px 8px;
+  }
+  .project-card dt{ color:var(--sn-text-mute); }
+  .project-card dd{ margin:0; color:var(--sn-text); font-weight:600; }
+
+  /* tabs */
+  .tabs{
+    display:flex;
+    gap:2px;
+    border-bottom:1px solid var(--sn-border);
+    background:#fff;
+    padding:0 6px;
+  }
+  .tabs button{
+    border:none;
+    background:transparent;
+    padding:10px 14px;
+    font-size:12px;
+    font-weight:600;
+    color:var(--sn-text-mute);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+  }
+  .tabs button.active{
+    color:var(--sn-teal-dark);
+    border-bottom-color:var(--sn-teal);
+  }
+  .tabpanel{
+    padding:16px;
+    font-size:12.5px;
+    color:var(--sn-text-mute);
+  }
+
+  /* toast + modal for the "save" simulation */
+  /* status message (replaces toast for demo) */
+  .status-msg{
+    display:none;
+    position:fixed;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+    padding:8px 18px;
+    border-radius:4px;
+    font-size:12.5px;
+    font-weight:600;
+    color:#fff;
+    z-index:9000;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
+    white-space:nowrap;
+  }
+  .status-ok{ background:var(--sn-teal); }
+  .status-error{ background:var(--sn-red); }
+  .toast{
+    position:fixed;
+    top:16px;
+    right:16px;
+    background:#1b2733;
+    color:#e7ecf1;
+    padding:12px 16px;
+    border-radius:6px;
+    font-size:12.5px;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    transform:translateY(-12px);
+    opacity:0;
+    pointer-events:none;
+    transition:all .25s ease;
+    z-index:50;
+  }
+  .toast.show{
+    transform:translateY(0);
+    opacity:1;
+  }
+  .toast .dot2{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--sn-teal);
+    flex-shrink:0;
+  }
+
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(11,13,23,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:60;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    background:#0f172a;
+    color:#d8e2ea;
+    width:min(560px, 92vw);
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.4);
+  }
+  .modal-head{
+    padding:14px 18px;
+    background:#111f33;
+    border-bottom:1px solid #223349;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
+    font-weight:700;
+  }
+  .modal-head .dot2{ width:8px;height:8px;border-radius:50%; background:var(--sn-teal);}
+  .modal pre{
+    margin:0;
+    padding:16px 18px;
+    font-size:12px;
+    line-height:1.6;
+    overflow-x:auto;
+    font-family:"SF Mono", Menlo, Consolas, monospace;
+    color:#9fe6da;
+  }
+  .modal-foot{
+    padding:12px 18px;
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    border-top:1px solid #223349;
+  }
+  .modal-foot .btn{
+    background:transparent;
+    color:#d8e2ea;
+    border-color:#2a3c53;
+  }
+  .modal-foot .btn.primary{
+    background:var(--sn-teal);
+    border-color:var(--sn-teal);
+    color:#06231f;
+  }
+
+  @media (max-width:760px){
+    .sidenav{ display:none; }
+    .grid{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span> Now&nbsp;Demo Instance</div>
+  <div class="search"><input type="text" placeholder="Search incidents, requests, articles…"></div>
+  <div class="topbar-right">
+    <span>Service Desk</span>
+    <span>⚙</span>
+    <div class="avatar">JT</div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="sidenav">
+    <div class="group-label">Service Desk</div>
+    <a href="#"><span class="icon"></span> Overview</a>
+    <a href="#" class="active"><span class="icon"></span> Incidents</a>
+    <a href="#"><span class="icon"></span> Requests</a>
+    <a href="#"><span class="icon"></span> Problems</a>
+    <div class="group-label">Integrations</div>
+    <a href="#"><span class="icon"></span> Azure DevOps Sync</a>
+    <a href="#"><span class="icon"></span> Outbound Log</a>
+    <div class="group-label">Self-Service</div>
+    <a href="#"><span class="icon"></span> Knowledge Base</a>
+    <a href="#"><span class="icon"></span> My Approvals</a>
+  </div>
+
+  <div class="main">
+    <div class="recordbar">
+      <div class="crumbs"><span>Service Desk</span> &nbsp;›&nbsp; <span>Incidents</span> &nbsp;›&nbsp; <b id="incCrumbs">INC0010234</b></div>
+      <div class="record-title-row">
+        <h1 id="incTitle">INC0010234</h1> — Checkout service returning 500 on payment step
+        <span class="badge priority-1">Priority 1</span>
+        <span class="badge state-new">New</span>
+        <div class="actions">
+          <button class="btn">Escalate</button>
+          <button class="btn" id="saveBtn">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="formwrap">
+
+      <div class="panel">
+        <div class="panel-head">Incident Details</div>
+        <div class="grid">
+          <div class="field">
+            <label>Caller</label>
+            <div class="value">Maria Chen</div>
+          </div>
+          <div class="field">
+            <label>Opened</label>
+            <div class="value">2026-07-05 08:12:44</div>
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <div class="value">Software</div>
+          </div>
+          <div class="field">
+            <label>Assignment Group</label>
+            <div class="value">Platform Engineering</div>
+          </div>
+          <div class="field">
+            <label>Priority</label>
+            <div class="value">1 - Critical</div>
+          </div>
+          <div class="field">
+            <label>State</label>
+            <select>
+              <option>New</option>
+              <option>In Progress</option>
+              <option>On Hold</option>
+              <option>Resolved</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Short Description</label>
+            <input type="text" value="Checkout service returning 500 on payment step">
+          </div>
+          <div class="field full">
+            <label>Description</label>
+            <textarea>Customers report failed checkouts intermittently since ~07:50 UTC. Payment step returns HTTP 500. Correlates with a deploy to the checkout-service at 07:45 UTC. Error rate ~14% of attempts.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel replicate-panel">
+        <div class="panel-head">Azure DevOps Replication <span class="tag">Custom integration</span></div>
+        <div class="replicate-body">
+          <div class="replicate-select-wrap">
+            <label for="incidentInput">Incident Number</label>
+            <input type="text" id="incidentInput" placeholder="INC1234567" style="padding:6px 8px;font-size:12.5px;border:1px solid var(--sn-border);background:var(--sn-input);color:var(--sn-text);border-radius:3px;width:100%;margin-bottom:12px;">
+            <label for="projectPick">Target Azure DevOps project</label>
+            <select id="projectPick">
+              <option value="" selected disabled>Choose a project…</option>
+              <option value="UPO-Sandbox">UPO-Sandbox</option>
+            </select>
+            <div class="hint">Selecting a project and saving will send this incident's data to your service, which creates a matching user story in that Azure DevOps project.</div>
+          </div>
+          <div id="payloadDisplay" style="display:none;margin-top:12px;padding:12px;background:#1b2733;border:1px solid var(--sn-border);border-radius:3px;">
+            <div style="font-size:11px;font-weight:600;color:var(--sn-text-mute);margin-bottom:6px;">Request Payload:</div>
+            <pre id="payloadJson" style="margin:0;font-size:11px;color:#7dd3c0;overflow:auto;max-height:200px;"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tabs">
+          <button class="active" data-tab="notes">Work Notes</button>
+          <button data-tab="activity">Activity</button>
+          <button data-tab="related">Related Records</button>
+        </div>
+        <div class="tabpanel" id="tab-notes">No work notes yet. Add a note to keep the assignment group updated.</div>
+        <div class="tabpanel" id="tab-activity" style="display:none;">08:12 — Incident created by Maria Chen · 08:14 — Assigned to Platform Engineering</div>
+        <div class="tabpanel" id="tab-related" style="display:none;">No related records. Once a story is created, it will appear here with a link back to the Azure DevOps work item.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" style="display:none;"><span class="dot2"></span><span id="toastText">Saved</span></div>
+  <div class="status-msg" id="statusMsg" style="display:none;"></div>
+
+
+<script>
+  // Local testing: when the page is opened directly from disk (file://) or from a
+  // different origin than the Functions host, point at the Azure Function endpoint.
+  // In a real ServiceNow-hosted deployment this would be a same-origin relative path.
+  const API_ENDPOINT = (location.protocol === 'file:' || location.port !== '7071')
+    ? 'https://fun-ado-snowsync-poc-01.azurewebsites.net/api/servicenow/userstory'
+    : '/api/servicenow/userstory';
+  const API_KEY = 'snowsync-dev-api-key';
+
+  const select = document.getElementById('projectPick');
+  select.value = '';
+
+  // Pre-fill incident number with INC0 + 6 random digits
+  const incidentInput = document.getElementById('incidentInput');
+  if (incidentInput) {
+    const num = Math.floor(100000 + Math.random() * 900000); // 6-digit number
+    incidentInput.value = 'INC0' + num;
+  }
+
+  const statusEl = document.getElementById('statusMsg');
+
+  function setStatus(msg, isError) {
+    if (!statusEl) return;
+    statusEl.textContent = msg;
+    statusEl.style.display = 'block';
+    statusEl.className = isError ? 'status-msg status-error' : 'status-msg status-ok';
+  }
+
+  function generateIncidentNumber() {
+    // 7-digit random suffix, e.g. INC4839201
+    const num = Math.floor(1000000 + Math.random() * 9000000);
+    return 'INC' + num;
+  }
+
+  function updateIncidentDisplay(inc) {
+    const crumbs = document.getElementById('incCrumbs');
+    const title = document.getElementById('incTitle');
+    const genSpan = document.getElementById('genInc');
+    if (crumbs) crumbs.textContent = inc;
+    if (title) title.childNodes[0].textContent = inc + ' ';
+    if (genSpan) genSpan.textContent = inc;
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const proj = select.value;
+    if (!proj) {
+      setStatus('Save - no Team Project selected', true);
+      return;
+    }
+
+    const incidentInput = document.getElementById('incidentInput');
+    const inc = incidentInput ? incidentInput.value.trim() : '';
+    if (!inc) {
+      setStatus('Save - no Incident Number provided', true);
+      return;
+    }
+
+    const titleInput = document.querySelector('.field.full input[type=text]');
+    const descTextarea = document.querySelector('.field.full textarea');
+
+    updateIncidentDisplay(inc);
+
+    const payload = {
+      IncidentNumber: inc,
+      TeamProject: proj,
+      Title: titleInput ? titleInput.value : '',
+      Description: descTextarea ? descTextarea.value : '',
+      IncidentUrl: 'https://example.service-now.com/nav_to.do?uri=incident.do?sysparm_query=number=' + encodeURIComponent(inc)
+    };
+
+    // Display the payload
+    const payloadDisplay = document.getElementById('payloadDisplay');
+    const payloadJson = document.getElementById('payloadJson');
+    if (payloadDisplay && payloadJson) {
+      payloadJson.textContent = JSON.stringify(payload, null, 2);
+      payloadDisplay.style.display = 'block';
+    }
+
+    try {
+      const resp = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': API_KEY
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (resp.ok) {
+        const data = await resp.json().catch(() => null);
+        setStatus(inc + ' created in ' + proj + (data && data.workItemId ? ' (WI ' + data.workItemId + ')' : ''), false);
+      } else {
+        setStatus('Save failed', true);
+      }
+    } catch (e) {
+      setStatus('Save failed', true);
+    }
+  });
+
+  document.querySelectorAll('.tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tabpanel').forEach(p => p.style.display = 'none');
+      document.getElementById('tab-' + btn.dataset.tab).style.display = 'block';
+    });
+  });
+</script>
+
+</body>
+</html>

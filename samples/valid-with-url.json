@@ -1,0 +1,7 @@
+{
+  "IncidentNumber": "INC0012457",
+  "TeamProject": "UPO",
+  "Title": "Email delivery delay",
+  "Description": "Reports of intermittent 30-minute delivery delays since 09:00 CT.",
+  "IncidentUrl": "https://example.service-now.com/nav_to.do?uri=incident.do?sysparm_query=number=INC0012457"
+}
